@@ -1,7 +1,12 @@
 package com.company.studentmanagementsystem.students;
 
+import com.company.studentmanagementsystem.books.Book;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "students")
@@ -21,9 +26,12 @@ public class Student {
     @Email
     private String email;
 
+    @OneToMany(mappedBy = "student")
+    @JsonManagedReference
+    private List<Book> books = new ArrayList<>();
+
     @Pattern(regexp = "^\\+?[0-9]{8,15}$", message = "Numero di telefono non valido")
     private String phoneNumber;
-
 
     public Student() {
 
@@ -75,5 +83,13 @@ public class Student {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
     }
 }

@@ -23,7 +23,7 @@ public class StudentService {
     @Transactional(readOnly = true)
     public Student findById(Long id){
         return studentRepository.findById(id)
-                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+                .orElseThrow(() -> new StudentNotFoundException(id));
     }
 
     @Transactional
@@ -42,7 +42,7 @@ public class StudentService {
 
                     return studentRepository.save(existingStudent);
                 })
-                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+                .orElseThrow(() -> new StudentNotFoundException(id));
     }
 
     @Transactional
