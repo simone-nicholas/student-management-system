@@ -23,6 +23,11 @@ public class BookController {
         return bookService.getAllBooks();
     }
 
+    @GetMapping("/students/{studentId}/books")
+    public ResponseEntity<List<Book>> getAllBooksByStudentId(@PathVariable("studentId") Long studentId) {
+        return ResponseEntity.ok(bookService.getStudentBooks(studentId));
+    }
+
     @PostMapping("/books")
     public ResponseEntity<Book> addBook(@RequestBody @Valid Book book) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -32,5 +37,12 @@ public class BookController {
     @PostMapping("/students/{studentId}/books/{bookId}")
     public ResponseEntity<Book> addBook(@PathVariable Long studentId, @PathVariable Long bookId) {
         return ResponseEntity.ok(bookService.assignBookToStudent(studentId, bookId));
+    }
+
+    @DeleteMapping("/students/{studentId}/books/{bookId}")
+    public ResponseEntity<Book> deleteBook(@PathVariable Long studentId, @PathVariable Long bookId) {
+
+        bookService.removeBookFromStudent(bookId);
+        return ResponseEntity.status(200).build();
     }
 }

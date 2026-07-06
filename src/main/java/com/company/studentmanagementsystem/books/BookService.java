@@ -7,10 +7,8 @@ import com.company.studentmanagementsystem.students.StudentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 
-// Assign a book to a student POST /students/{studentId}/books/{bookId}
 @Service
 public class BookService {
     private final BookRepository bookRepository;
@@ -24,6 +22,20 @@ public class BookService {
     @Transactional(readOnly = true)
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Book getBookById(Long id) {
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Book> getStudentBooks(Long studentId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException(studentId));
+
+        return student.getBooks();
     }
 
     @Transactional
@@ -40,5 +52,10 @@ public class BookService {
 
         book.setStudent(student);
         return bookRepository.save(book);
+    }
+
+    @Transactional
+    public void removeBookFromStudent(Long bookId) {
+        bookRepository.delete(getBookById(bookId));
     }
 }
