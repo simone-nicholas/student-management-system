@@ -5,9 +5,11 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "books")
@@ -24,6 +26,7 @@ public class Book {
 
     @Column(nullable = false, unique = true)
     @NotBlank
+    @Size(min = 10, max = 17)
     private String isbn;
 
     @NotNull
@@ -32,7 +35,7 @@ public class Book {
     @NotNull
     private LocalDate publishDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
     @JsonBackReference
     private Student student;
@@ -41,8 +44,8 @@ public class Book {
 
     }
 
-    public Book(String bookName, String author, String isbn, BigDecimal price, LocalDate publishDate) {
-        this.title = bookName;
+    public Book(String title, String author, String isbn, BigDecimal price, LocalDate publishDate) {
+        this.title = title;
         this.author = author;
         this.isbn = isbn;
         this.price = price;
@@ -61,8 +64,8 @@ public class Book {
         return title;
     }
 
-    public void setTitle(String bookName) {
-        this.title = bookName;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getAuthor() {
@@ -103,5 +106,20 @@ public class Book {
 
     public void setStudent(Student student) {
         this.student = student;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Book book = (Book) o;
+
+        return id != null && id.equals(book.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

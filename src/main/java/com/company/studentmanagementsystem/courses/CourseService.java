@@ -28,8 +28,7 @@ public class CourseService {
 
     @Transactional(readOnly = true)
     public List<Student> getStudentsFromCourse(Long courseId) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new CourseNotFoundException(courseId));
+        Course course = getCourseById(courseId);
 
         return course.getStudents();
     }
@@ -49,11 +48,13 @@ public class CourseService {
 
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException(studentId));
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new CourseNotFoundException(courseId));
+        Course course = getCourseById(courseId);
 
         if (!student.getCourses().contains(course)) {
             student.getCourses().add(course);
+        }
+
+        if (!course.getStudents().contains(student)) {
             course.getStudents().add(student);
         }
         
@@ -83,8 +84,7 @@ public class CourseService {
     public void removeCourseFromStudent(Long studentId, Long courseId) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException(studentId));
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new CourseNotFoundException(courseId));
+        Course course = getCourseById(courseId);
 
         student.getCourses().remove(course);
         course.getStudents().remove(student);
@@ -96,6 +96,13 @@ public class CourseService {
     @Transactional
     public void deleteCourse(Long courseId) {
         Course course = getCourseById(courseId);
+
+        for (Student student : course.getStudents()) {
+            student.getCourses().remove(course);
+        }
+
+        course.getStudents().clear();
+
         courseRepository.delete(course);
     }
 }

@@ -1,11 +1,11 @@
 package com.company.studentmanagementsystem.books;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -13,14 +13,13 @@ import java.util.List;
 public class BookController {
     private final BookService bookService;
 
-    @Autowired
     public BookController(BookService bookService) {
-        this.bookService =  bookService;
+        this.bookService = bookService;
     }
 
     @GetMapping("/books")
-    public List<Book> getAllBooks() {
-        return bookService.getAllBooks();
+    public ResponseEntity<List<Book>> getAllBooks() {
+        return ResponseEntity.ok(bookService.getAllBooks());
     }
 
     @GetMapping("/students/{studentId}/books")
@@ -28,21 +27,42 @@ public class BookController {
         return ResponseEntity.ok(bookService.getStudentBooks(studentId));
     }
 
+    @GetMapping("/books/{bookId}")
+    public ResponseEntity<Book> getBook(@PathVariable Long bookId) {
+        return ResponseEntity.ok(bookService.getBookById(bookId));
+    }
+
     @PostMapping("/books")
-    public ResponseEntity<Book> addBook(@RequestBody @Valid Book book) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(bookService.addBook(book));
+    public ResponseEntity<Book> createBook(@RequestBody @Valid Book book) {
+        Book created = bookService.addBook(book);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{bookId}")
+                .buildAndExpand(created.getId())
+                .toUri();
+
+        return ResponseEntity
+                .created(location)
+                .body(created);
     }
 
     @PostMapping("/students/{studentId}/books/{bookId}")
-    public ResponseEntity<Book> addBook(@PathVariable Long studentId, @PathVariable Long bookId) {
+    public ResponseEntity<Book> assignBookToStudent(@PathVariable Long studentId, @PathVariable Long bookId) {
         return ResponseEntity.ok(bookService.assignBookToStudent(studentId, bookId));
     }
 
     @DeleteMapping("/students/{studentId}/books/{bookId}")
-    public ResponseEntity<Book> deleteBook(@PathVariable Long studentId, @PathVariable Long bookId) {
+    public ResponseEntity<Void> removeBookFromStudent(
+            @PathVariable Long studentId,
+            @PathVariable Long bookId) {
 
-        bookService.removeBookFromStudent(bookId);
-        return ResponseEntity.status(200).build();
+        bookService.removeBookFromStudent(studentId, bookId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/books/{bookId}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long bookId) {
+        bookService.deleteBook(bookId);
+        return ResponseEntity.noContent().build();
     }
 }

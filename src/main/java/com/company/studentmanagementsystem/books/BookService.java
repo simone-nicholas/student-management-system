@@ -1,11 +1,14 @@
 package com.company.studentmanagementsystem.books;
 
+import com.company.studentmanagementsystem.exceptions.BookNotAssignedException;
 import com.company.studentmanagementsystem.exceptions.BookNotFoundException;
 import com.company.studentmanagementsystem.exceptions.StudentNotFoundException;
 import com.company.studentmanagementsystem.students.Student;
 import com.company.studentmanagementsystem.students.StudentRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -47,15 +50,50 @@ public class BookService {
     public Book assignBookToStudent(Long studentId, Long bookId) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException(studentId));
-        Book book = bookRepository.findById(bookId).
-                orElseThrow(() -> new BookNotFoundException(bookId));
+        Book book = getBookById(bookId);
+
+        Student previousStudent = book.getStudent();
+
+        if (student.equals(book.getStudent())) {
+            return book;
+        }
+
+        if (previousStudent != null) {
+            previousStudent.getBooks().remove(book);
+        }
 
         book.setStudent(student);
+
+        if (!student.getBooks().contains(book)) {
+            student.getBooks().add(book);
+        }
+
         return bookRepository.save(book);
     }
 
     @Transactional
-    public void removeBookFromStudent(Long bookId) {
-        bookRepository.delete(getBookById(bookId));
+    public void removeBookFromStudent(Long studentId, Long bookId) {
+        Book book = getBookById(bookId);
+
+        if (book.getStudent() == null ||
+                !book.getStudent().getId().equals(studentId)) {
+            throw new BookNotAssignedException(bookId, studentId);
+        }
+
+        book.getStudent().getBooks().remove(book);
+        book.setStudent(null);
+        bookRepository.save(book);
+    }
+
+    @Transactional
+    public void deleteBook(Long id) {
+        Book book = getBookById(id);
+
+        if (book.getStudent() != null) {
+            book.getStudent().getBooks().remove(book);
+            book.setStudent(null);
+        }
+
+        bookRepository.delete(book);
     }
 }

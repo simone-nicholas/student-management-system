@@ -3,6 +3,9 @@ package com.company.studentmanagementsystem.courses;
 import com.company.studentmanagementsystem.students.Student;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +15,27 @@ import java.util.List;
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
+
+    @NotBlank
+    @Column(nullable = false)
     private String name;
+
+    @NotBlank
+    @Column(nullable = false, unique = true)
     private String code;
+
+    @NotBlank
+    @Column(nullable = false)
     private String description;
+
+    @NotNull
+    @Min(1)
+    @Column(nullable = false)
     private Integer credits;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "student_courses",
             joinColumns = @JoinColumn(name = "course_id"),
@@ -32,8 +48,7 @@ public class Course {
 
     }
 
-    public Course(Long id, String name, String code, String description, Integer credits) {
-        this.id = id;
+    public Course(String name, String code, String description, Integer credits) {
         this.name = name;
         this.code = code;
         this.description = description;
@@ -86,5 +101,20 @@ public class Course {
 
     public void setStudents(List<Student> students) {
         this.students = students;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Course course = (Course) o;
+
+        return id != null && id.equals(course.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

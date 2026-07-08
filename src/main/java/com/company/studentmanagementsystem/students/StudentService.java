@@ -1,11 +1,12 @@
 package com.company.studentmanagementsystem.students;
 
+import com.company.studentmanagementsystem.books.Book;
+import com.company.studentmanagementsystem.courses.Course;
 import com.company.studentmanagementsystem.exceptions.StudentNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -33,20 +34,36 @@ public class StudentService {
 
     @Transactional
     public Student update(Long id, Student student) {
-        return studentRepository.findById(id)
-                .map(existingStudent -> {
-                    if(student.getName() != null) existingStudent.setName(student.getName());
-                    if(student.getSurname() != null) existingStudent.setSurname(student.getSurname());
-                    if(student.getEmail() != null) existingStudent.setEmail(student.getEmail());
-                    if(student.getPhoneNumber() != null) existingStudent.setPhoneNumber(student.getPhoneNumber());
+        Student existingStudent = findById(id);
 
-                    return studentRepository.save(existingStudent);
-                })
-                .orElseThrow(() -> new StudentNotFoundException(id));
+        if(student.getName() != null)
+            existingStudent.setName(student.getName());
+        if(student.getSurname() != null)
+            existingStudent.setSurname(student.getSurname());
+        if(student.getEmail() != null)
+            existingStudent.setEmail(student.getEmail());
+        if(student.getPhoneNumber() != null)
+            existingStudent.setPhoneNumber(student.getPhoneNumber());
+
+        return existingStudent;
     }
 
     @Transactional
     public void deleteById(Long id) {
-        studentRepository.delete(findById(id));
+        Student student = findById(id);
+
+        for (Course course : List.copyOf(student.getCourses())) {
+            course.getStudents().remove(student);
+        }
+
+        student.getCourses().clear();
+
+        for (Book book : student.getBooks()) {
+            book.setStudent(null);
+        }
+
+        student.getBooks().clear();
+
+        studentRepository.delete(student);
     }
 }
