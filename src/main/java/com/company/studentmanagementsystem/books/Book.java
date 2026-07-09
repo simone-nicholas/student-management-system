@@ -18,26 +18,14 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     private String title;
-
-    @NotBlank
     private String author;
-
-    @Column(nullable = false, unique = true)
-    @NotBlank
-    @Size(min = 10, max = 17)
     private String isbn;
-
-    @NotNull
     private BigDecimal price;
-
-    @NotNull
     private LocalDate publishDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
-    @JsonBackReference
     private Student student;
 
     public Book() {

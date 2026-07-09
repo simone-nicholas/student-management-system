@@ -17,20 +17,15 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     @Column(nullable = false)
     private String name;
 
-    @NotBlank
     @Column(nullable = false, unique = true)
     private String code;
 
-    @NotBlank
     @Column(nullable = false)
     private String description;
 
-    @NotNull
-    @Min(1)
     @Column(nullable = false)
     private Integer credits;
 

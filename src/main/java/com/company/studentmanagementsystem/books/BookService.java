@@ -5,10 +5,8 @@ import com.company.studentmanagementsystem.exceptions.BookNotFoundException;
 import com.company.studentmanagementsystem.exceptions.StudentNotFoundException;
 import com.company.studentmanagementsystem.students.Student;
 import com.company.studentmanagementsystem.students.StudentRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 

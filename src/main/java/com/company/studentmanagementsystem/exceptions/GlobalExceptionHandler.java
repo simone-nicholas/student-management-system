@@ -7,27 +7,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(value = StudentNotFoundException.class)
-    public ResponseEntity<String> studentNotFoundExceptionHandler(StudentNotFoundException exception) {
+    @ExceptionHandler({
+            StudentNotFoundException.class,
+            CourseNotFoundException.class,
+            BookNotFoundException.class,
+            BookNotAssignedException.class
+    })
+    public ResponseEntity<String> handleNotFound(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
-    }
-
-    @ExceptionHandler(value = CourseNotFoundException.class)
-    public ResponseEntity<String> courseNotFoundExceptionHandler(CourseNotFoundException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
-    }
-
-    @ExceptionHandler(value = BookNotFoundException.class)
-    public ResponseEntity<String> bookNotFoundException(BookNotFoundException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
-    }
-
-    @ExceptionHandler(value = BookNotAssignedException.class)
-    public ResponseEntity<String> bookNotAssignedException(BookNotAssignedException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
+                .body(ex.getMessage());
     }
 }

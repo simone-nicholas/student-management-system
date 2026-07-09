@@ -21,17 +21,12 @@ public class Student {
     @Column(nullable = false)
     private String name;
 
-    @NotBlank
     @Column(nullable = false)
     private String surname;
 
     @Column(unique = true, nullable = false)
-    @NotBlank
-    @Email
     private String email;
 
-    @NotBlank
-    @Pattern(regexp = "^\\+?[0-9]{8,15}$", message = "Numero di telefono non valido")
     @Column(nullable = false)
     private String phoneNumber;
 

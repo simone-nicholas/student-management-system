@@ -1,5 +1,8 @@
 package com.company.studentmanagementsystem.books;
 
+import com.company.studentmanagementsystem.books.dto.BookRequestDTO;
+import com.company.studentmanagementsystem.books.dto.BookResponseDTO;
+import com.company.studentmanagementsystem.books.mapper.BookMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,30 +14,62 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1")
 public class BookController {
+
     private final BookService bookService;
 
     public BookController(BookService bookService) {
         this.bookService = bookService;
     }
 
+
     @GetMapping("/books")
-    public ResponseEntity<List<Book>> getAllBooks() {
-        return ResponseEntity.ok(bookService.getAllBooks());
+    public ResponseEntity<List<BookResponseDTO>> getAllBooks() {
+
+        List<BookResponseDTO> books = bookService.getAllBooks()
+                .stream()
+                .map(BookMapper::toDTO)
+                .toList();
+
+        return ResponseEntity.ok(books);
     }
+
 
     @GetMapping("/students/{studentId}/books")
-    public ResponseEntity<List<Book>> getAllBooksByStudentId(@PathVariable("studentId") Long studentId) {
-        return ResponseEntity.ok(bookService.getStudentBooks(studentId));
+    public ResponseEntity<List<BookResponseDTO>> getAllBooksByStudentId(
+            @PathVariable Long studentId
+    ) {
+
+        List<BookResponseDTO> books = bookService.getStudentBooks(studentId)
+                .stream()
+                .map(BookMapper::toDTO)
+                .toList();
+
+        return ResponseEntity.ok(books);
     }
+
 
     @GetMapping("/books/{bookId}")
-    public ResponseEntity<Book> getBook(@PathVariable Long bookId) {
-        return ResponseEntity.ok(bookService.getBookById(bookId));
+    public ResponseEntity<BookResponseDTO> getBook(
+            @PathVariable Long bookId
+    ) {
+
+        Book book = bookService.getBookById(bookId);
+
+        return ResponseEntity.ok(
+                BookMapper.toDTO(book)
+        );
     }
 
+
     @PostMapping("/books")
-    public ResponseEntity<Book> createBook(@RequestBody @Valid Book book) {
+    public ResponseEntity<BookResponseDTO> createBook(
+            @Valid @RequestBody BookRequestDTO request
+    ) {
+
+        Book book = BookMapper.toEntity(request);
+
         Book created = bookService.addBook(book);
+
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{bookId}")
@@ -43,26 +78,43 @@ public class BookController {
 
         return ResponseEntity
                 .created(location)
-                .body(created);
+                .body(BookMapper.toDTO(created));
     }
 
+
     @PostMapping("/students/{studentId}/books/{bookId}")
-    public ResponseEntity<Book> assignBookToStudent(@PathVariable Long studentId, @PathVariable Long bookId) {
-        return ResponseEntity.ok(bookService.assignBookToStudent(studentId, bookId));
+    public ResponseEntity<BookResponseDTO> assignBookToStudent(
+            @PathVariable Long studentId,
+            @PathVariable Long bookId
+    ) {
+
+        Book book = bookService.assignBookToStudent(studentId, bookId);
+
+        return ResponseEntity.ok(
+                BookMapper.toDTO(book)
+        );
     }
+
 
     @DeleteMapping("/students/{studentId}/books/{bookId}")
     public ResponseEntity<Void> removeBookFromStudent(
             @PathVariable Long studentId,
-            @PathVariable Long bookId) {
+            @PathVariable Long bookId
+    ) {
 
         bookService.removeBookFromStudent(studentId, bookId);
+
         return ResponseEntity.noContent().build();
     }
 
+
     @DeleteMapping("/books/{bookId}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long bookId) {
+    public ResponseEntity<Void> deleteBook(
+            @PathVariable Long bookId
+    ) {
+
         bookService.deleteBook(bookId);
+
         return ResponseEntity.noContent().build();
     }
 }
