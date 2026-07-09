@@ -14,28 +14,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/courses")
 public class CourseController {
     private final CourseService courseService;
 
-    @Autowired
     public CourseController(CourseService courseService) {
         this.courseService = courseService;
     }
 
-    @GetMapping("/students/{studentId}/courses")
-    public ResponseEntity<List<CourseResponseDTO>> getCourses(
-            @PathVariable("studentId") Long studentId) {
-        List<CourseResponseDTO> response = courseService.getCoursesFromStudent(studentId)
-                .stream()
-                .map(CourseMapper::toDTO)
-                .toList();
-
-        return ResponseEntity.ok(response);
-    }
-
     // 1. Cambia il tipo di ritorno in List<StudentResponseDTO>
-    @GetMapping("/courses/{courseId}/students")
+    @GetMapping("/{courseId}/students")
     public ResponseEntity<List<StudentResponseDTO>> getStudents(@PathVariable("courseId") Long courseId) {
 
         // 2. Prendi le entità dal service e mappale usando lo StudentMapper
@@ -47,7 +35,7 @@ public class CourseController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/courses")
+    @GetMapping
     public ResponseEntity<List<CourseResponseDTO>> getAllCourses() {
         List<CourseResponseDTO> response = courseService.getAllCourses()
                 .stream()
@@ -57,7 +45,7 @@ public class CourseController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/courses")
+    @PostMapping
     public ResponseEntity<CourseResponseDTO> createCourse(@Valid @RequestBody CourseRequestDTO request) {
         Course course = CourseMapper.toEntity(request);
 
@@ -67,24 +55,14 @@ public class CourseController {
                 .body(CourseMapper.toDTO(created));
     }
 
-    @PostMapping("/students/{studentId}/courses/{courseId}")
-    public ResponseEntity<CourseResponseDTO> assignCourseToStudent(
-            @PathVariable("studentId") Long studentId,
-            @PathVariable("courseId") Long courseId
-    ) {
-        Course course = courseService.assignCourseToStudent(studentId, courseId);
-
-        return ResponseEntity.ok(CourseMapper.toDTO(course));
-    }
-
-    @GetMapping("/courses/{courseId}")
+    @GetMapping("/{courseId}")
     public ResponseEntity<CourseResponseDTO> getCourse(@PathVariable("courseId") Long courseId) {
         Course course = courseService.getCourseById(courseId);
 
         return ResponseEntity.ok(CourseMapper.toDTO(course));
     }
 
-    @PutMapping("/courses/{courseId}")
+    @PutMapping("/{courseId}")
     public ResponseEntity<CourseResponseDTO> updateCourse(
             @PathVariable("courseId") Long courseId,
             @Valid @RequestBody CourseRequestDTO request
@@ -96,17 +74,9 @@ public class CourseController {
         return ResponseEntity.ok(CourseMapper.toDTO(updated));
     }
 
-    @DeleteMapping("/courses/{courseId}")
+    @DeleteMapping("/{courseId}")
     public ResponseEntity<Void> deleteCourse(@PathVariable("courseId") Long courseId) {
         courseService.deleteCourse(courseId);
-        return ResponseEntity.status(204).build();
-    }
-
-    @DeleteMapping("/students/{studentId}/courses/{courseId}")
-    public ResponseEntity<Void> removeCourseFromStudent(
-            @PathVariable("studentId") Long studentId,
-            @PathVariable("courseId") Long courseId) {
-        courseService.removeCourseFromStudent(studentId, courseId);
         return ResponseEntity.status(204).build();
     }
 }

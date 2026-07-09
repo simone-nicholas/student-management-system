@@ -33,14 +33,6 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public List<Book> getStudentBooks(Long studentId) {
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new StudentNotFoundException(studentId));
-
-        return student.getBooks();
-    }
-
-    @Transactional(readOnly = true)
     public Student getBookOwner(Long bookId){
         Book book = getBookById(bookId);
 
@@ -52,45 +44,6 @@ public class BookService {
     @Transactional
     public Book addBook(Book book) {
         return bookRepository.save(book);
-    }
-
-    @Transactional
-    public Book assignBookToStudent(Long studentId, Long bookId) {
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new StudentNotFoundException(studentId));
-        Book book = getBookById(bookId);
-
-        Student previousStudent = book.getStudent();
-
-        if (student.equals(book.getStudent())) {
-            return book;
-        }
-
-        if (previousStudent != null) {
-            previousStudent.getBooks().remove(book);
-        }
-
-        book.setStudent(student);
-
-        if (!student.getBooks().contains(book)) {
-            student.getBooks().add(book);
-        }
-
-        return bookRepository.save(book);
-    }
-
-    @Transactional
-    public void removeBookFromStudent(Long studentId, Long bookId) {
-        Book book = getBookById(bookId);
-
-        if (book.getStudent() == null ||
-                !book.getStudent().getId().equals(studentId)) {
-            throw new BookNotAssignedException(bookId, studentId);
-        }
-
-        book.getStudent().getBooks().remove(book);
-        book.setStudent(null);
-        bookRepository.save(book);
     }
 
     @Transactional

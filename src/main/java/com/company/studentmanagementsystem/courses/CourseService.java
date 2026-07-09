@@ -20,13 +20,6 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
-    public List<Course> getCoursesFromStudent(Long studentId) {
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new StudentNotFoundException(studentId));
-        return student.getCourses();
-    }
-
-    @Transactional(readOnly = true)
     public List<Student> getStudentsFromCourse(Long courseId) {
         Course course = getCourseById(courseId);
 
@@ -43,27 +36,6 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
-    @Transactional
-    public Course assignCourseToStudent(Long studentId, Long courseId) {
-
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new StudentNotFoundException(studentId));
-        Course course = getCourseById(courseId);
-
-        if (!student.getCourses().contains(course)) {
-            student.getCourses().add(course);
-        }
-
-        if (!course.getStudents().contains(student)) {
-            course.getStudents().add(student);
-        }
-        
-        studentRepository.save(student);
-        courseRepository.save(course);
-        
-        return course;
-    }
-
     @Transactional(readOnly = true)
     public Course getCourseById(Long courseId) {
         return courseRepository.findById(courseId)
@@ -78,19 +50,6 @@ public class CourseService {
         if (courseDetails.getDescription() != null) course.setDescription(courseDetails.getDescription());
         if (courseDetails.getCredits() != null) course.setCredits(courseDetails.getCredits());
         return courseRepository.save(course);
-    }
-
-    @Transactional
-    public void removeCourseFromStudent(Long studentId, Long courseId) {
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new StudentNotFoundException(studentId));
-        Course course = getCourseById(courseId);
-
-        student.getCourses().remove(course);
-        course.getStudents().remove(student);
-
-        studentRepository.save(student);
-        courseRepository.save(course);
     }
 
     @Transactional
