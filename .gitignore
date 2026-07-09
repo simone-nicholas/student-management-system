@@ -43,6 +43,6 @@ logs/
 .env
 .env.*
 
-# Spring profiles (se un giorno li userai)
+# Spring profiles (credenziali locali/prod, mai committare)
 application-local.properties
-application-prod.properties
+application.properties
