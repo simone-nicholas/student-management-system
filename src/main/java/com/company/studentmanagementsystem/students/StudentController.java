@@ -1,5 +1,8 @@
 package com.company.studentmanagementsystem.students;
 
+import com.company.studentmanagementsystem.students.dto.StudentRequestDTO;
+import com.company.studentmanagementsystem.students.dto.StudentResponseDTO;
+import com.company.studentmanagementsystem.students.mapper.StudentMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,18 +21,24 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Student>> getAllStudents() {
-        return ResponseEntity.ok(studentService.findAll());
+    public ResponseEntity<List<StudentResponseDTO>> getAllStudents() {
+        List<StudentResponseDTO> students = studentService.findAll()
+                .stream()
+                .map(student -> StudentMapper.toDTO(student))
+                .toList();
+        return ResponseEntity.ok(students);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> getStudentById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(studentService.findById(id));
+    public ResponseEntity<StudentResponseDTO> getStudentById(@PathVariable("id") Long id) {
+        Student student = studentService.findById(id);
+        return ResponseEntity.ok(StudentMapper.toDTO(student));
     }
 
     @PostMapping
-    public ResponseEntity<Student> createStudent(@Valid @RequestBody Student student) {
-        Student created = studentService.create(student);
+    public ResponseEntity<StudentResponseDTO> createStudent(@Valid @RequestBody StudentRequestDTO requestDTO) {
+        Student studentEntity = StudentMapper.toEntity(requestDTO);
+        Student created = studentService.create(studentEntity);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -37,17 +46,22 @@ public class StudentController {
                 .buildAndExpand(created.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(created);
+        return ResponseEntity.created(location).body(StudentMapper.toDTO(created));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable("id") Long id, @Valid @RequestBody Student student) {
-        Student updated = studentService.update(id, student);
-        return ResponseEntity.ok(updated);
+    public ResponseEntity<StudentResponseDTO> updateStudent(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody StudentRequestDTO requestDTO
+    ) {
+        Student studentEntity = StudentMapper.toEntity(requestDTO);
+        Student updated = studentService.update(id, studentEntity);
+        //  CORRETTO: Adesso usa la chiamata standard al metodo statico
+        return ResponseEntity.ok(StudentMapper.toDTO(updated));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Student> deleteStudent(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deleteStudent(@PathVariable("id") Long id) {
         studentService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

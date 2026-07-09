@@ -1,5 +1,6 @@
 package com.company.studentmanagementsystem.books;
 
+import com.company.studentmanagementsystem.exceptions.BookHasNoOwnerException;
 import com.company.studentmanagementsystem.exceptions.BookNotAssignedException;
 import com.company.studentmanagementsystem.exceptions.BookNotFoundException;
 import com.company.studentmanagementsystem.exceptions.StudentNotFoundException;
@@ -37,6 +38,15 @@ public class BookService {
                 .orElseThrow(() -> new StudentNotFoundException(studentId));
 
         return student.getBooks();
+    }
+
+    @Transactional(readOnly = true)
+    public Student getBookOwner(Long bookId){
+        Book book = getBookById(bookId);
+
+        if(book.getStudent() == null) throw new BookHasNoOwnerException(bookId);
+
+        return book.getStudent();
     }
 
     @Transactional

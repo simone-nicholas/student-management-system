@@ -11,7 +11,8 @@ public class GlobalExceptionHandler {
             StudentNotFoundException.class,
             CourseNotFoundException.class,
             BookNotFoundException.class,
-            BookNotAssignedException.class
+            BookNotAssignedException.class,
+            BookHasNoOwnerException.class
     })
     public ResponseEntity<String> handleNotFound(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

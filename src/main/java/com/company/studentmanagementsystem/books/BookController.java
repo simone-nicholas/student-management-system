@@ -3,6 +3,10 @@ package com.company.studentmanagementsystem.books;
 import com.company.studentmanagementsystem.books.dto.BookRequestDTO;
 import com.company.studentmanagementsystem.books.dto.BookResponseDTO;
 import com.company.studentmanagementsystem.books.mapper.BookMapper;
+import com.company.studentmanagementsystem.students.Student;
+import com.company.studentmanagementsystem.students.StudentService;
+import com.company.studentmanagementsystem.students.dto.StudentResponseDTO;
+import com.company.studentmanagementsystem.students.mapper.StudentMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +25,6 @@ public class BookController {
         this.bookService = bookService;
     }
 
-
     @GetMapping("/books")
     public ResponseEntity<List<BookResponseDTO>> getAllBooks() {
 
@@ -32,7 +35,6 @@ public class BookController {
 
         return ResponseEntity.ok(books);
     }
-
 
     @GetMapping("/students/{studentId}/books")
     public ResponseEntity<List<BookResponseDTO>> getAllBooksByStudentId(
@@ -47,6 +49,12 @@ public class BookController {
         return ResponseEntity.ok(books);
     }
 
+    @GetMapping("/books/{bookId}/owner")
+    public ResponseEntity<StudentResponseDTO> getStudentByBookId(@PathVariable("bookId") Long bookId) {
+        Student student = bookService.getBookOwner(bookId);
+
+        return ResponseEntity.ok(StudentMapper.toDTO(student));
+    }
 
     @GetMapping("/books/{bookId}")
     public ResponseEntity<BookResponseDTO> getBook(

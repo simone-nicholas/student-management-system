@@ -4,6 +4,8 @@ import com.company.studentmanagementsystem.courses.dto.CourseRequestDTO;
 import com.company.studentmanagementsystem.courses.dto.CourseResponseDTO;
 import com.company.studentmanagementsystem.courses.mapper.CourseMapper;
 import com.company.studentmanagementsystem.students.Student;
+import com.company.studentmanagementsystem.students.dto.StudentResponseDTO;
+import com.company.studentmanagementsystem.students.mapper.StudentMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +34,17 @@ public class CourseController {
         return ResponseEntity.ok(response);
     }
 
+    // 1. Cambia il tipo di ritorno in List<StudentResponseDTO>
     @GetMapping("/courses/{courseId}/students")
-    public ResponseEntity<List<Student>> getStudents(@PathVariable("courseId") Long courseId) {
-        return ResponseEntity.ok(courseService.getStudentsFromCourse(courseId));
+    public ResponseEntity<List<StudentResponseDTO>> getStudents(@PathVariable("courseId") Long courseId) {
+
+        // 2. Prendi le entità dal service e mappale usando lo StudentMapper
+        List<StudentResponseDTO> response = courseService.getStudentsFromCourse(courseId)
+                .stream()
+                .map(StudentMapper::toDTO) // Usa il tuo mapper degli studenti
+                .toList();
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/courses")

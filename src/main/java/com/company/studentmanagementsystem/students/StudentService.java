@@ -1,7 +1,9 @@
 package com.company.studentmanagementsystem.students;
 
 import com.company.studentmanagementsystem.books.Book;
+import com.company.studentmanagementsystem.books.BookRepository;
 import com.company.studentmanagementsystem.courses.Course;
+import com.company.studentmanagementsystem.exceptions.BookNotFoundException;
 import com.company.studentmanagementsystem.exceptions.StudentNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,9 +13,11 @@ import java.util.List;
 @Service
 public class StudentService {
     private final StudentRepository studentRepository;
+    private final BookRepository bookRepository;
 
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository, BookRepository bookRepository) {
         this.studentRepository = studentRepository;
+        this.bookRepository = bookRepository;
     }
 
     @Transactional(readOnly = true)
