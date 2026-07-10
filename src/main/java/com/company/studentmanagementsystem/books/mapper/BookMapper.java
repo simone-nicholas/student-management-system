@@ -1,6 +1,6 @@
 package com.company.studentmanagementsystem.books.mapper;
 
-import com.company.studentmanagementsystem.books.Book;
+import com.company.studentmanagementsystem.books.model.Book;
 import com.company.studentmanagementsystem.books.dto.BookRequestDTO;
 import com.company.studentmanagementsystem.books.dto.BookResponseDTO;
 

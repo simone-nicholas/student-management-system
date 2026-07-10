@@ -3,11 +3,14 @@ package com.company.studentmanagementsystem.courses;
 import com.company.studentmanagementsystem.courses.dto.CourseRequestDTO;
 import com.company.studentmanagementsystem.courses.dto.CourseResponseDTO;
 import com.company.studentmanagementsystem.courses.mapper.CourseMapper;
-import com.company.studentmanagementsystem.students.Student;
+import com.company.studentmanagementsystem.courses.model.Course;
+import com.company.studentmanagementsystem.courses.service.CourseDeleteService;
+import com.company.studentmanagementsystem.courses.service.CourseGetService;
+import com.company.studentmanagementsystem.courses.service.CoursePostService;
+import com.company.studentmanagementsystem.courses.service.CoursePutService;
 import com.company.studentmanagementsystem.students.dto.StudentResponseDTO;
 import com.company.studentmanagementsystem.students.mapper.StudentMapper;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,20 +19,29 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/courses")
 public class CourseController {
-    private final CourseService courseService;
+    private final CoursePostService coursePostService;
+    private final CourseGetService courseGetService;
+    private final CoursePutService coursePutService;
+    private final CourseDeleteService courseDeleteService;
 
-    public CourseController(CourseService courseService) {
-        this.courseService = courseService;
+    public CourseController(
+            CoursePostService coursePostService,
+            CourseGetService courseGetService,
+            CoursePutService coursePutService,
+            CourseDeleteService courseDeleteService
+    ) {
+        this.coursePostService = coursePostService;
+        this.courseGetService = courseGetService;
+        this.coursePutService = coursePutService;
+        this.courseDeleteService = courseDeleteService;
     }
 
-    // 1. Cambia il tipo di ritorno in List<StudentResponseDTO>
     @GetMapping("/{courseId}/students")
     public ResponseEntity<List<StudentResponseDTO>> getStudents(@PathVariable("courseId") Long courseId) {
 
-        // 2. Prendi le entità dal service e mappale usando lo StudentMapper
-        List<StudentResponseDTO> response = courseService.getStudentsFromCourse(courseId)
+        List<StudentResponseDTO> response = courseGetService.getStudentsFromCourse(courseId)
                 .stream()
-                .map(StudentMapper::toDTO) // Usa il tuo mapper degli studenti
+                .map(StudentMapper::toDTO)
                 .toList();
 
         return ResponseEntity.ok(response);
@@ -37,7 +49,7 @@ public class CourseController {
 
     @GetMapping
     public ResponseEntity<List<CourseResponseDTO>> getAllCourses() {
-        List<CourseResponseDTO> response = courseService.getAllCourses()
+        List<CourseResponseDTO> response = courseGetService.getAllCourses()
                 .stream()
                 .map(CourseMapper::toDTO)
                 .toList();
@@ -45,21 +57,21 @@ public class CourseController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{courseId}")
+    public ResponseEntity<CourseResponseDTO> getCourse(@PathVariable("courseId") Long courseId) {
+        Course course = courseGetService.getCourseById(courseId);
+
+        return ResponseEntity.ok(CourseMapper.toDTO(course));
+    }
+
     @PostMapping
     public ResponseEntity<CourseResponseDTO> createCourse(@Valid @RequestBody CourseRequestDTO request) {
         Course course = CourseMapper.toEntity(request);
 
-        Course created = courseService.createCourse(course);
+        Course created = coursePostService.createCourse(course);
 
         return ResponseEntity.status(201)
                 .body(CourseMapper.toDTO(created));
-    }
-
-    @GetMapping("/{courseId}")
-    public ResponseEntity<CourseResponseDTO> getCourse(@PathVariable("courseId") Long courseId) {
-        Course course = courseService.getCourseById(courseId);
-
-        return ResponseEntity.ok(CourseMapper.toDTO(course));
     }
 
     @PutMapping("/{courseId}")
@@ -69,14 +81,14 @@ public class CourseController {
     ) {
         Course course = CourseMapper.toEntity(request);
 
-        Course updated = courseService.updateCourse(courseId, course);
+        Course updated = coursePutService.updateCourse(courseId, course);
 
         return ResponseEntity.ok(CourseMapper.toDTO(updated));
     }
 
     @DeleteMapping("/{courseId}")
     public ResponseEntity<Void> deleteCourse(@PathVariable("courseId") Long courseId) {
-        courseService.deleteCourse(courseId);
+        courseDeleteService.deleteCourse(courseId);
         return ResponseEntity.status(204).build();
     }
 }

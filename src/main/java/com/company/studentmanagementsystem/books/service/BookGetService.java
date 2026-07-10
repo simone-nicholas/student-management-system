@@ -1,24 +1,22 @@
-package com.company.studentmanagementsystem.books;
+package com.company.studentmanagementsystem.books.service;
 
+import com.company.studentmanagementsystem.books.BookRepository;
+import com.company.studentmanagementsystem.books.model.Book;
 import com.company.studentmanagementsystem.exceptions.BookHasNoOwnerException;
-import com.company.studentmanagementsystem.exceptions.BookNotAssignedException;
 import com.company.studentmanagementsystem.exceptions.BookNotFoundException;
-import com.company.studentmanagementsystem.exceptions.StudentNotFoundException;
-import com.company.studentmanagementsystem.students.Student;
-import com.company.studentmanagementsystem.students.StudentRepository;
+import com.company.studentmanagementsystem.students.model.Student;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-public class BookService {
-    private final BookRepository bookRepository;
-    private final StudentRepository studentRepository;
+public class BookGetService {
 
-    public BookService(BookRepository bookRepository, StudentRepository studentRepository) {
+    private final BookRepository bookRepository;
+
+    public BookGetService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
-        this.studentRepository = studentRepository;
     }
 
     @Transactional(readOnly = true)
@@ -39,22 +37,5 @@ public class BookService {
         if(book.getStudent() == null) throw new BookHasNoOwnerException(bookId);
 
         return book.getStudent();
-    }
-
-    @Transactional
-    public Book addBook(Book book) {
-        return bookRepository.save(book);
-    }
-
-    @Transactional
-    public void deleteBook(Long id) {
-        Book book = getBookById(id);
-
-        if (book.getStudent() != null) {
-            book.getStudent().getBooks().remove(book);
-            book.setStudent(null);
-        }
-
-        bookRepository.delete(book);
     }
 }

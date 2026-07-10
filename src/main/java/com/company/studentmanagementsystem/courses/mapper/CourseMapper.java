@@ -1,6 +1,6 @@
 package com.company.studentmanagementsystem.courses.mapper;
 
-import com.company.studentmanagementsystem.courses.Course;
+import com.company.studentmanagementsystem.courses.model.Course;
 import com.company.studentmanagementsystem.courses.dto.CourseRequestDTO;
 import com.company.studentmanagementsystem.courses.dto.CourseResponseDTO;
 

@@ -1,6 +1,6 @@
 package com.company.studentmanagementsystem.students.mapper;
 
-import com.company.studentmanagementsystem.students.Student;
+import com.company.studentmanagementsystem.students.model.Student;
 import com.company.studentmanagementsystem.students.dto.StudentRequestDTO;
 import com.company.studentmanagementsystem.students.dto.StudentResponseDTO;
 import org.springframework.stereotype.Component;

@@ -3,8 +3,11 @@ package com.company.studentmanagementsystem.books;
 import com.company.studentmanagementsystem.books.dto.BookRequestDTO;
 import com.company.studentmanagementsystem.books.dto.BookResponseDTO;
 import com.company.studentmanagementsystem.books.mapper.BookMapper;
-import com.company.studentmanagementsystem.students.Student;
-import com.company.studentmanagementsystem.students.StudentService;
+import com.company.studentmanagementsystem.books.model.Book;
+import com.company.studentmanagementsystem.books.service.BookDeleteService;
+import com.company.studentmanagementsystem.books.service.BookGetService;
+import com.company.studentmanagementsystem.books.service.BookPostService;
+import com.company.studentmanagementsystem.students.model.Student;
 import com.company.studentmanagementsystem.students.dto.StudentResponseDTO;
 import com.company.studentmanagementsystem.students.mapper.StudentMapper;
 import jakarta.validation.Valid;
@@ -19,16 +22,24 @@ import java.util.List;
 @RequestMapping("/api/v1/books")
 public class BookController {
 
-    private final BookService bookService;
+    private final BookPostService bookPostService;
+    private final BookGetService bookGetService;
+    private final BookDeleteService bookDeleteService;
 
-    public BookController(BookService bookService) {
-        this.bookService = bookService;
+    public BookController(
+            BookPostService bookPostService,
+            BookGetService bookGetService,
+            BookDeleteService bookDeleteService
+    ) {
+        this.bookPostService = bookPostService;
+        this.bookGetService = bookGetService;
+        this.bookDeleteService = bookDeleteService;
     }
 
     @GetMapping
     public ResponseEntity<List<BookResponseDTO>> getAllBooks() {
 
-        List<BookResponseDTO> books = bookService.getAllBooks()
+        List<BookResponseDTO> books = bookGetService.getAllBooks()
                 .stream()
                 .map(BookMapper::toDTO)
                 .toList();
@@ -38,7 +49,7 @@ public class BookController {
 
     @GetMapping("/{bookId}/owner")
     public ResponseEntity<StudentResponseDTO> getStudentByBookId(@PathVariable("bookId") Long bookId) {
-        Student student = bookService.getBookOwner(bookId);
+        Student student = bookGetService.getBookOwner(bookId);
 
         return ResponseEntity.ok(StudentMapper.toDTO(student));
     }
@@ -48,7 +59,7 @@ public class BookController {
             @PathVariable Long bookId
     ) {
 
-        Book book = bookService.getBookById(bookId);
+        Book book = bookGetService.getBookById(bookId);
 
         return ResponseEntity.ok(
                 BookMapper.toDTO(book)
@@ -63,7 +74,7 @@ public class BookController {
 
         Book book = BookMapper.toEntity(request);
 
-        Book created = bookService.addBook(book);
+        Book created = bookPostService.addBook(book);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -80,8 +91,7 @@ public class BookController {
     public ResponseEntity<Void> deleteBook(
             @PathVariable Long bookId
     ) {
-
-        bookService.deleteBook(bookId);
+        bookDeleteService.deleteBook(bookId);
 
         return ResponseEntity.noContent().build();
     }

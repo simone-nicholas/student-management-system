@@ -1,16 +1,15 @@
-package com.company.studentmanagementsystem.courses;
+package com.company.studentmanagementsystem.courses.model;
 
-import com.company.studentmanagementsystem.students.Student;
+import com.company.studentmanagementsystem.students.model.Student;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Data
 @Table(name = "courses")
 public class Course {
     @Id

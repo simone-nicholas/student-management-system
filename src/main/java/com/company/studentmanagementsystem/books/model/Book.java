@@ -1,17 +1,14 @@
-package com.company.studentmanagementsystem.books;
+package com.company.studentmanagementsystem.books.model;
 
-import com.company.studentmanagementsystem.students.Student;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.company.studentmanagementsystem.students.model.Student;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
+@Data
 @Table(name = "books")
 public class Book {
     @Id
