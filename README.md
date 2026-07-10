@@ -147,19 +147,6 @@ Examples:
 - `@Email`
 - `@Pattern`
 
-## Future Improvements
-
-- DTO pattern
-- Global exception handling (`@ControllerAdvice`)
-- Pagination
-- Sorting
-- Filtering
-- Unit tests
-- Integration tests
-- Authentication with Spring Security
-- Swagger / OpenAPI documentation
-- Docker support
-
 ## Learning Goals
 
 This project is intended to practice:
@@ -174,6 +161,7 @@ This project is intended to practice:
 - Validation
 - Exception Handling
 - PostgreSQL
+- Docker
 
 ## Author
 
