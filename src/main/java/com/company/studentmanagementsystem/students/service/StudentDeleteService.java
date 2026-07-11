@@ -10,10 +10,12 @@ import com.company.studentmanagementsystem.exceptions.CourseNotFoundException;
 import com.company.studentmanagementsystem.exceptions.StudentNotFoundException;
 import com.company.studentmanagementsystem.students.StudentRepository;
 import com.company.studentmanagementsystem.students.model.Student;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Service
 public class StudentDeleteService {
 
     private final StudentRepository studentRepository;
