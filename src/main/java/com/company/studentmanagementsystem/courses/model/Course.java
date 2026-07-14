@@ -3,13 +3,11 @@ package com.company.studentmanagementsystem.courses.model;
 import com.company.studentmanagementsystem.students.model.Student;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
 @Table(name = "courses")
 public class Course {
     @Id

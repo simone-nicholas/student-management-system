@@ -1,21 +1,23 @@
-package com.company.studentmanagementsystem.courses;
+package com.company.studentmanagementsystem.students;
 
+import com.company.studentmanagementsystem.courses.CourseRepository;
 import com.company.studentmanagementsystem.courses.model.Course;
 import com.company.studentmanagementsystem.exceptions.CourseNotFoundException;
+import com.company.studentmanagementsystem.students.model.Student;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class CourseFinder {
-    private final CourseRepository courseRepository;
+public class StudentFinder {
+    private final StudentRepository studentRepository;
 
-    public CourseFinder(CourseRepository courseRepository) {
-        this.courseRepository = courseRepository;
+    public StudentFinder(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
     @Transactional(readOnly = true)
-    public Course getCourseById(Long courseId) {
-        return courseRepository.findById(courseId)
-                .orElseThrow(() -> new CourseNotFoundException(courseId));
+    public Student getStudentById(Long studentId) {
+        return studentRepository.findById(studentId)
+                .orElseThrow(() -> new CourseNotFoundException(studentId));
     }
 }

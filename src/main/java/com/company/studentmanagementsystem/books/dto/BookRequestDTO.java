@@ -16,7 +16,6 @@ public record BookRequestDTO(
         @NotBlank
         String author,
 
-        @Column(nullable = false, unique = true)
         @NotBlank
         @Size(min = 10, max = 17)
         String isbn,

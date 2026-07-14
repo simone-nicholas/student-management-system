@@ -1,8 +1,8 @@
 package com.company.studentmanagementsystem.courses.service;
 
+import com.company.studentmanagementsystem.courses.CourseFinder;
 import com.company.studentmanagementsystem.courses.CourseRepository;
 import com.company.studentmanagementsystem.courses.model.Course;
-import com.company.studentmanagementsystem.exceptions.CourseNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,20 +10,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class CoursePutService {
 
     private final CourseRepository courseRepository;
+    private final CourseFinder courseFinder;
 
-    public CoursePutService(CourseRepository courseRepository) {
+    public CoursePutService(
+            CourseRepository courseRepository,
+            CourseFinder courseFinder) {
+
         this.courseRepository = courseRepository;
-    }
-
-    @Transactional(readOnly = true)
-    public Course getCourseById(Long courseId) {
-        return courseRepository.findById(courseId)
-                .orElseThrow(() -> new CourseNotFoundException(courseId));
+        this.courseFinder = courseFinder;
     }
 
     @Transactional
     public Course updateCourse(Long courseId, Course courseDetails) {
-        Course course = getCourseById(courseId);
+        Course course = courseFinder.getCourseById(courseId);
         if (courseDetails.getName() != null) course.setName(courseDetails.getName());
         if (courseDetails.getCode() != null) course.setCode(courseDetails.getCode());
         if (courseDetails.getDescription() != null) course.setDescription(courseDetails.getDescription());

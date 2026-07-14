@@ -140,7 +140,7 @@ public class StudentController {
         return ResponseEntity.status(204).build();
     }
 
-    @DeleteMapping("/students/{studentId}/books/{bookId}")
+    @DeleteMapping("/{studentId}/books/{bookId}")
     public ResponseEntity<Void> removeBookFromStudent(
             @PathVariable Long studentId,
             @PathVariable Long bookId

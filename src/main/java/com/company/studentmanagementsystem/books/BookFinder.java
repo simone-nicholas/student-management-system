@@ -1,6 +1,5 @@
-package com.company.studentmanagementsystem;
+package com.company.studentmanagementsystem.books;
 
-import com.company.studentmanagementsystem.books.BookRepository;
 import com.company.studentmanagementsystem.books.model.Book;
 import com.company.studentmanagementsystem.exceptions.BookNotFoundException;
 import org.springframework.stereotype.Component;

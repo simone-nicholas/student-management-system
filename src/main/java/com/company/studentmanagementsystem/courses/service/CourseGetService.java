@@ -1,5 +1,6 @@
 package com.company.studentmanagementsystem.courses.service;
 
+import com.company.studentmanagementsystem.courses.CourseFinder;
 import com.company.studentmanagementsystem.courses.CourseRepository;
 import com.company.studentmanagementsystem.courses.model.Course;
 import com.company.studentmanagementsystem.exceptions.CourseNotFoundException;
@@ -12,20 +13,19 @@ import java.util.List;
 @Service
 public class CourseGetService {
     private final CourseRepository courseRepository;
+    private final CourseFinder courseFinder;
 
-    public CourseGetService(CourseRepository courseRepository) {
+    public CourseGetService(
+            CourseRepository courseRepository,
+            CourseFinder courseFinder
+    ) {
         this.courseRepository = courseRepository;
-    }
-
-    @Transactional(readOnly = true)
-    public Course getCourseById(Long courseId) {
-        return courseRepository.findById(courseId)
-                .orElseThrow(() -> new CourseNotFoundException(courseId));
+        this.courseFinder = courseFinder;
     }
 
     @Transactional(readOnly = true)
     public List<Student> getStudentsFromCourse(Long courseId) {
-        Course course = getCourseById(courseId);
+        Course course = courseFinder.getCourseById(courseId);
 
         return course.getStudents();
     }

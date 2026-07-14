@@ -2,13 +2,11 @@ package com.company.studentmanagementsystem.books.model;
 
 import com.company.studentmanagementsystem.students.model.Student;
 import jakarta.persistence.*;
-import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Data
 @Table(name = "books")
 public class Book {
     @Id
@@ -17,7 +15,10 @@ public class Book {
 
     private String title;
     private String author;
+
+    @Column(nullable = false, unique = true)
     private String isbn;
+
     private BigDecimal price;
     private LocalDate publishDate;
 

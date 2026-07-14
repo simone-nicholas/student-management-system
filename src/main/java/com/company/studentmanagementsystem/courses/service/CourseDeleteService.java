@@ -1,5 +1,6 @@
 package com.company.studentmanagementsystem.courses.service;
 
+import com.company.studentmanagementsystem.courses.CourseFinder;
 import com.company.studentmanagementsystem.courses.CourseRepository;
 import com.company.studentmanagementsystem.courses.model.Course;
 import com.company.studentmanagementsystem.exceptions.CourseNotFoundException;
@@ -10,20 +11,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CourseDeleteService {
     private final CourseRepository courseRepository;
+    private final CourseFinder courseFinder;
 
-    public CourseDeleteService(CourseRepository courseRepository) {
+    public CourseDeleteService(
+            CourseRepository courseRepository,
+           CourseFinder courseFinder
+    ) {
         this.courseRepository = courseRepository;
-    }
-
-    @Transactional(readOnly = true)
-    public Course getCourseById(Long courseId) {
-        return courseRepository.findById(courseId)
-                .orElseThrow(() -> new CourseNotFoundException(courseId));
+        this.courseFinder = courseFinder;
     }
 
     @Transactional
     public void deleteCourse(Long courseId) {
-        Course course = getCourseById(courseId);
+        Course course = courseFinder.getCourseById(courseId);
 
         for (Student student : course.getStudents()) {
             student.getCourses().remove(course);

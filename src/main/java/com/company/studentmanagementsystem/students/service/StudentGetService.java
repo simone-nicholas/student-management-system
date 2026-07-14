@@ -7,6 +7,7 @@ import com.company.studentmanagementsystem.courses.model.Course;
 import com.company.studentmanagementsystem.exceptions.BookNotFoundException;
 import com.company.studentmanagementsystem.exceptions.CourseNotFoundException;
 import com.company.studentmanagementsystem.exceptions.StudentNotFoundException;
+import com.company.studentmanagementsystem.students.StudentFinder;
 import com.company.studentmanagementsystem.students.StudentRepository;
 import com.company.studentmanagementsystem.students.model.Student;
 import org.springframework.stereotype.Service;
@@ -17,29 +18,14 @@ import java.util.List;
 @Service
 public class StudentGetService {
     private final StudentRepository studentRepository;
-    private final BookRepository bookRepository;
-    private final CourseRepository courseRepository;
+    private final StudentFinder studentFinder;
 
     public StudentGetService(
             StudentRepository studentRepository,
-            BookRepository bookRepository,
-            CourseRepository courseRepository
+            StudentFinder studentFinder
     ) {
         this.studentRepository = studentRepository;
-        this.bookRepository = bookRepository;
-        this.courseRepository = courseRepository;
-    }
-
-    @Transactional(readOnly = true)
-    public Book getBookById(Long bookId) {
-        return bookRepository.findById(bookId)
-                .orElseThrow(() -> new BookNotFoundException(bookId));
-    }
-
-    @Transactional(readOnly = true)
-    public Course getCourseById(Long courseId) {
-        return courseRepository.findById(courseId)
-                .orElseThrow(() -> new CourseNotFoundException(courseId));
+        this.studentFinder = studentFinder;
     }
 
     @Transactional(readOnly = true)
@@ -55,15 +41,14 @@ public class StudentGetService {
 
     @Transactional(readOnly = true)
     public List<Course> getCoursesFromStudent(Long studentId) {
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new StudentNotFoundException(studentId));
+        Student student = studentFinder.getStudentById(studentId);
+
         return student.getCourses();
     }
 
     @Transactional(readOnly = true)
     public List<Book> getStudentBooks(Long studentId) {
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new StudentNotFoundException(studentId));
+        Student student = studentFinder.getStudentById(studentId);
 
         return student.getBooks();
     }

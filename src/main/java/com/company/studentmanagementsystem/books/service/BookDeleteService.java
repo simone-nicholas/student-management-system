@@ -1,8 +1,8 @@
 package com.company.studentmanagementsystem.books.service;
 
+import com.company.studentmanagementsystem.books.BookFinder;
 import com.company.studentmanagementsystem.books.BookRepository;
 import com.company.studentmanagementsystem.books.model.Book;
-import com.company.studentmanagementsystem.exceptions.BookNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,20 +10,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookDeleteService {
 
     private final BookRepository bookRepository;
+    private final BookFinder bookFinder;
 
-    public BookDeleteService(BookRepository bookRepository) {
+    public BookDeleteService(
+            BookRepository bookRepository,
+            BookFinder bookFinder
+    ) {
         this.bookRepository = bookRepository;
-    }
-
-    @Transactional(readOnly = true)
-    public Book getBookById(Long id) {
-        return bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(id));
+        this.bookFinder = bookFinder;
     }
 
     @Transactional
     public void deleteBook(Long id) {
-        Book book = getBookById(id);
+        Book book = bookFinder.getBookById(id);
 
         if (book.getStudent() != null) {
             book.getStudent().getBooks().remove(book);

@@ -23,17 +23,20 @@ public class CourseController {
     private final CourseGetService courseGetService;
     private final CoursePutService coursePutService;
     private final CourseDeleteService courseDeleteService;
+    private final CourseFinder courseFinder;
 
     public CourseController(
             CoursePostService coursePostService,
             CourseGetService courseGetService,
             CoursePutService coursePutService,
-            CourseDeleteService courseDeleteService
+            CourseDeleteService courseDeleteService,
+            CourseFinder courseFinder
     ) {
         this.coursePostService = coursePostService;
         this.courseGetService = courseGetService;
         this.coursePutService = coursePutService;
         this.courseDeleteService = courseDeleteService;
+        this.courseFinder = courseFinder;
     }
 
     @GetMapping("/{courseId}/students")
@@ -59,7 +62,7 @@ public class CourseController {
 
     @GetMapping("/{courseId}")
     public ResponseEntity<CourseResponseDTO> getCourse(@PathVariable("courseId") Long courseId) {
-        Course course = courseGetService.getCourseById(courseId);
+        Course course = courseFinder.getCourseById(courseId);
 
         return ResponseEntity.ok(CourseMapper.toDTO(course));
     }

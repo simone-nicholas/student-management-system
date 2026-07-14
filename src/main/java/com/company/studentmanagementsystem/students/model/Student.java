@@ -6,13 +6,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
 @Table(name = "students")
 public class Student {
     @Id
