@@ -1,6 +1,9 @@
 package com.company.studentmanagementsystem.students.service;
 
+import com.company.studentmanagementsystem.books.model.Book;
+import com.company.studentmanagementsystem.courses.model.Course;
 import com.company.studentmanagementsystem.exceptions.StudentNotFoundException;
+import com.company.studentmanagementsystem.students.StudentFinder;
 import com.company.studentmanagementsystem.students.StudentRepository;
 import com.company.studentmanagementsystem.students.model.Student;
 import org.junit.jupiter.api.Test;
@@ -21,6 +24,9 @@ class StudentGetServiceTest {
 
     @Mock
     private StudentRepository studentRepository;
+
+    @Mock
+    private StudentFinder studentFinder;
 
     @InjectMocks
     private StudentGetService studentGetService;
@@ -75,10 +81,54 @@ class StudentGetServiceTest {
     }
 
     @Test
-    void getCoursesFromStudent() {
+    void getCoursesFromStudent_returnsCoursesOfStudent() {
+        Course math = new Course();
+        math.setId(10L);
+        math.setName("Matematica");
+
+        Student mario = new Student();
+        mario.setId(1L);
+        mario.setCourses(List.of(math));
+
+        when(studentFinder.getStudentById(1L)).thenReturn(mario);
+
+        List<Course> result = studentGetService.getCoursesFromStudent(1L);
+
+        assertEquals(1, result.size());
+        assertEquals("Matematica", result.getFirst().getName());
+    }
+
+    @Test
+    void getCoursesFromStudent_throwsException_whenNotFound() {
+        when(studentFinder.getStudentById(99L)).thenThrow(new StudentNotFoundException(99L));
+
+        assertThrows(StudentNotFoundException.class, () -> studentGetService.getCoursesFromStudent(99L));
     }
 
     @Test
     void getStudentBooks() {
+        Book cyberSecurity = new Book();
+
+        cyberSecurity.setId(1L);
+        cyberSecurity.setTitle("Cyber Security");
+
+        Student mario = new Student();
+
+        mario.setId(1L);
+        mario.setBooks(List.of(cyberSecurity));
+
+        when(studentFinder.getStudentById(1L)).thenReturn(mario);
+
+        List<Book> result = studentGetService.getStudentBooks(1L);
+
+        assertEquals(1, result.size());
+        assertEquals("Cyber Security", result.getFirst().getTitle());
+    }
+
+    @Test
+    void getStudentBooks_throwsException_whenNotFound() {
+        when(studentFinder.getStudentById(99L)).thenThrow(new StudentNotFoundException(99L));
+
+        assertThrows(StudentNotFoundException.class, () -> studentGetService.getStudentBooks(99L));
     }
 }
