@@ -9,7 +9,7 @@ import com.company.studentmanagementsystem.students.service.StudentDeleteService
 import com.company.studentmanagementsystem.students.service.StudentGetService;
 import com.company.studentmanagementsystem.students.service.StudentPostService;
 import com.company.studentmanagementsystem.students.service.StudentPutService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -34,7 +34,7 @@ class StudentControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper objectMapper;
 
     @MockitoBean
     private StudentPostService studentPostService;

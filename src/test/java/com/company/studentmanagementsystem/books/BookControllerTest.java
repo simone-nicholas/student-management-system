@@ -8,7 +8,7 @@ import com.company.studentmanagementsystem.books.service.BookPostService;
 import com.company.studentmanagementsystem.exceptions.BookHasNoOwnerException;
 import com.company.studentmanagementsystem.exceptions.BookNotFoundException;
 import com.company.studentmanagementsystem.students.model.Student;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -32,7 +32,7 @@ class BookControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper objectMapper;
 
     @MockitoBean
     private BookPostService bookPostService;

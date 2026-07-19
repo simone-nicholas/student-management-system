@@ -17,6 +17,9 @@ public record StudentRequestDTO(
 
         @NotBlank
         @Pattern(regexp = "^\\+?[0-9]{8,15}$", message = "Numero di telefono non valido")
-        String phoneNumber
+        String phoneNumber,
+
+        @NotBlank
+        String password
 ) {
 }

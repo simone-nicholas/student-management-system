@@ -3,7 +3,7 @@ package com.company.studentmanagementsystem;
 import com.company.studentmanagementsystem.books.dto.BookRequestDTO;
 import com.company.studentmanagementsystem.courses.dto.CourseRequestDTO;
 import com.company.studentmanagementsystem.students.dto.StudentRequestDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,11 +20,6 @@ import java.time.LocalDate;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * Full Spring context integration test: exercises the real controllers, services,
- * mappers and JPA repositories together against an in-memory H2 database
- * (see application-test.properties), instead of mocking any collaborator.
- */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -35,7 +30,7 @@ class StudentManagementSystemIntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper objectMapper;
 
     private Long createStudent(String name, String surname, String email, String phone) throws Exception {
         StudentRequestDTO request = new StudentRequestDTO(name, surname, email, phone);

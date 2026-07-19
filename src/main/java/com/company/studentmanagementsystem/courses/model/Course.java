@@ -3,26 +3,39 @@ package com.company.studentmanagementsystem.courses.model;
 import com.company.studentmanagementsystem.students.model.Student;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "courses")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = {"students"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
+    @NotBlank
     @Column(nullable = false)
     private String name;
 
+    @NotBlank
     @Column(nullable = false, unique = true)
     private String code;
 
+    @NotBlank
     @Column(nullable = false)
     private String description;
 
+    @NotBlank
     @Column(nullable = false)
     private Integer credits;
 
@@ -35,78 +48,4 @@ public class Course {
     )
     @JsonIgnore
     private List<Student> students = new ArrayList<>();
-
-    public Course() {
-
-    }
-
-    public Course(String name, String code, String description, Integer credits) {
-        this.name = name;
-        this.code = code;
-        this.description = description;
-        this.credits = credits;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getCredits() {
-        return credits;
-    }
-
-    public void setCredits(Integer credits) {
-        this.credits = credits;
-    }
-
-    public List<Student> getStudents() {
-        return students;
-    }
-
-    public void setStudents(List<Student> students) {
-        this.students = students;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Course course = (Course) o;
-
-        return id != null && id.equals(course.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }
