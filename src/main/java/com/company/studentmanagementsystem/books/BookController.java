@@ -1,5 +1,6 @@
 package com.company.studentmanagementsystem.books;
 
+import com.company.studentmanagementsystem.PagedResponse;
 import com.company.studentmanagementsystem.books.dto.BookRequestDTO;
 import com.company.studentmanagementsystem.books.dto.BookResponseDTO;
 import com.company.studentmanagementsystem.books.mapper.BookMapper;
@@ -7,10 +8,12 @@ import com.company.studentmanagementsystem.books.model.Book;
 import com.company.studentmanagementsystem.books.service.BookDeleteService;
 import com.company.studentmanagementsystem.books.service.BookGetService;
 import com.company.studentmanagementsystem.books.service.BookPostService;
+import com.company.studentmanagementsystem.courses.mapper.CourseMapper;
 import com.company.studentmanagementsystem.students.model.Student;
 import com.company.studentmanagementsystem.students.dto.StudentResponseDTO;
 import com.company.studentmanagementsystem.students.mapper.StudentMapper;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -37,14 +40,22 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookResponseDTO>> getAllBooks() {
+    public ResponseEntity<PagedResponse<BookResponseDTO>> getAllBooks(
+            @RequestParam(value = "pageNo", required = false, defaultValue = "0") int pageNo,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize
+    ) {
+        Page<Book> page = bookGetService.getAllBooks(pageNo, pageSize);
 
-        List<BookResponseDTO> books = bookGetService.getAllBooks()
-                .stream()
-                .map(BookMapper::toDTO)
-                .toList();
+        PagedResponse<BookResponseDTO> response = new PagedResponse<>(
+                page.getContent().stream().map(BookMapper::toDTO).toList(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
+        );
 
-        return ResponseEntity.ok(books);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{bookId}/owner")

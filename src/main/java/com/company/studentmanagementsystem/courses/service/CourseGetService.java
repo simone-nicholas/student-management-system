@@ -5,6 +5,9 @@ import com.company.studentmanagementsystem.courses.CourseRepository;
 import com.company.studentmanagementsystem.courses.model.Course;
 import com.company.studentmanagementsystem.exceptions.CourseNotFoundException;
 import com.company.studentmanagementsystem.students.model.Student;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,14 +27,15 @@ public class CourseGetService {
     }
 
     @Transactional(readOnly = true)
+    public Page<Course> getAllCourses(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return courseRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
     public List<Student> getStudentsFromCourse(Long courseId) {
         Course course = courseFinder.getCourseById(courseId);
 
         return course.getStudents();
-    }
-
-    @Transactional(readOnly = true)
-    public List<Course> getAllCourses() {
-        return courseRepository.findAll();
     }
 }

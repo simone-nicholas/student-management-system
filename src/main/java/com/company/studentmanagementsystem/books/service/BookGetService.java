@@ -5,6 +5,9 @@ import com.company.studentmanagementsystem.books.BookRepository;
 import com.company.studentmanagementsystem.books.model.Book;
 import com.company.studentmanagementsystem.exceptions.BookHasNoOwnerException;
 import com.company.studentmanagementsystem.students.model.Student;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +28,10 @@ public class BookGetService {
     }
 
     @Transactional(readOnly = true)
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+    public Page<Book> getAllBooks(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+
+        return bookRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)

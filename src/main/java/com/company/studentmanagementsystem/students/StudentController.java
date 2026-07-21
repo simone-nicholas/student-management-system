@@ -1,5 +1,6 @@
 package com.company.studentmanagementsystem.students;
 
+import com.company.studentmanagementsystem.PagedResponse;
 import com.company.studentmanagementsystem.books.model.Book;
 import com.company.studentmanagementsystem.books.dto.BookResponseDTO;
 import com.company.studentmanagementsystem.books.mapper.BookMapper;
@@ -12,6 +13,7 @@ import com.company.studentmanagementsystem.students.mapper.StudentMapper;
 import com.company.studentmanagementsystem.students.model.Student;
 import com.company.studentmanagementsystem.students.service.*;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -40,12 +42,22 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StudentResponseDTO>> getAllStudents() {
-        List<StudentResponseDTO> students = studentGetService.findAll()
-                .stream()
-                .map(student -> StudentMapper.toDTO(student))
-                .toList();
-        return ResponseEntity.ok(students);
+    public ResponseEntity<PagedResponse<StudentResponseDTO>> getAllStudents(
+            @RequestParam(value = "pageNo", required = false, defaultValue = "0") int pageNo,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize
+    ) {
+        Page<Student> page = studentGetService.findAll(pageNo, pageSize);
+
+        PagedResponse<StudentResponseDTO> response = new PagedResponse<>(
+                page.getContent().stream().map(StudentMapper::toDTO).toList(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")

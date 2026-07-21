@@ -10,6 +10,9 @@ import com.company.studentmanagementsystem.exceptions.StudentNotFoundException;
 import com.company.studentmanagementsystem.students.StudentFinder;
 import com.company.studentmanagementsystem.students.StudentRepository;
 import com.company.studentmanagementsystem.students.model.Student;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +32,10 @@ public class StudentGetService {
     }
 
     @Transactional(readOnly = true)
-    public List<Student> findAll() {
-        return studentRepository.findAll();
+    public Page<Student> findAll(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+
+        return studentRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)

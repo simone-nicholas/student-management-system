@@ -1,84 +1,50 @@
 package com.company.studentmanagementsystem.courses.service;
 
-import com.company.studentmanagementsystem.courses.CourseFinder;
 import com.company.studentmanagementsystem.courses.CourseRepository;
 import com.company.studentmanagementsystem.courses.model.Course;
-import com.company.studentmanagementsystem.exceptions.CourseNotFoundException;
-import com.company.studentmanagementsystem.students.model.Student;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CourseGetServiceTest {
+class CourseServiceTest {
 
     @Mock
     private CourseRepository courseRepository;
 
-    @Mock
-    private CourseFinder courseFinder;
-
     @InjectMocks
-    private CourseGetService courseGetService;
+    private CourseGetService courseService;
 
     @Test
-    void getStudentsFromCourse_returnsStudentsOfCourse() {
-        Student mario = new Student();
-        mario.setId(1L);
-        mario.setName("Mario");
+    void getAllCourses_shouldReturnPagedContent() {
+        int pageNo = 0;
+        int pageSize = 2;
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
 
-        Course math = new Course();
-        math.setId(10L);
-        math.setStudents(List.of(mario));
+        List<Course> mockedCourses = List.of(
+                new Course(1L, "Introduction to Java", "CS101", "Basic Java course", 6, new ArrayList<>()),
+                new Course(2L, "Advanced Databases", "CS202", "Relational databases in depth", 8, new ArrayList<>())
+        );
+        Page<Course> mockedPage = new PageImpl<>(mockedCourses, pageable, 5); // 5 = totale finto nel "db"
 
-        when(courseFinder.getCourseById(10L)).thenReturn(math);
+        when(courseRepository.findAll(pageable)).thenReturn(mockedPage);
 
-        List<Student> result = courseGetService.getStudentsFromCourse(10L);
+        Page<Course> result = courseService.getAllCourses(pageNo, pageSize);
 
-        assertEquals(1, result.size());
-        assertEquals("Mario", result.getFirst().getName());
-    }
-
-    @Test
-    void getStudentsFromCourse_throwsException_whenNotFound() {
-        when(courseFinder.getCourseById(99L)).thenThrow(new CourseNotFoundException(99L));
-
-        assertThrows(CourseNotFoundException.class, () -> courseGetService.getStudentsFromCourse(99L));
-    }
-
-    @Test
-    void getAllCourses_returnsAllCourses() {
-        Course math = new Course();
-        math.setId(1L);
-        math.setName("Matematica");
-
-        Course physics = new Course();
-        physics.setId(2L);
-        physics.setName("Fisica");
-
-        when(courseRepository.findAll()).thenReturn(List.of(math, physics));
-
-        List<Course> result = courseGetService.getAllCourses();
-
-        assertEquals(2, result.size());
-        assertEquals("Matematica", result.get(0).getName());
-        assertEquals("Fisica", result.get(1).getName());
-    }
-
-    @Test
-    void getAllCourses_returnsEmptyList_whenNoCoursesExist() {
-        when(courseRepository.findAll()).thenReturn(List.of());
-
-        List<Course> result = courseGetService.getAllCourses();
-
-        assertEquals(0, result.size());
+        assertEquals(2, result.getContent().size());
+        assertEquals("Introduction to Java", result.getContent().get(0).getName());
+        assertEquals(3, result.getTotalPages());
     }
 }
