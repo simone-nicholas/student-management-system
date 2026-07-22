@@ -40,4 +40,12 @@ public class Book {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
     private Student student;
+
+    public Book(String title, String author, String isbn, BigDecimal price, LocalDate publishDate) {
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+        this.price = price;
+        this.publishDate = publishDate;
+    }
 }

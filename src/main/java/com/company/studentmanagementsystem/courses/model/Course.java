@@ -48,4 +48,11 @@ public class Course {
     )
     @JsonIgnore
     private List<Student> students = new ArrayList<>();
+
+    public Course(String name, String code, String description, Integer credits) {
+        this.name = name;
+        this.code = code;
+        this.description = description;
+        this.credits = credits;
+    }
 }
